@@ -141,75 +141,82 @@ class RandomNumbers(list):
         return req
 
 
-def new_screen(end='no'):
-    os.system("cls")
-    # os.system("clear")    #Clear screen in Linux
-    global x
-    print()
-    print("======= 'Loto' game =======")
-    print()
-    if end == 'no':
-        x = int(next(bag))
-        print('Новый бочонок: {} (осталось {})'.format(x, len(bag)))
-    elif end == 'yes':
-        print('Игра кончена. Осталось {} бочонков.'.format(len(bag)))
-    print(my_card)
-    print()
-    print(pc_card)
+def main():
+
+    def new_screen(end='no'):
+        os.system("cls")
+        # os.system("clear")    #Clear screen in Linux
+        global x
+        print()
+        print("======= 'Loto' game =======")
+        print()
+        if end == 'no':
+            x = int(next(bag))
+            print('Новый бочонок: {} (осталось {})'.format(x, len(bag)))
+        elif end == 'yes':
+            print('Игра кончена. Осталось {} бочонков.'.format(len(bag)))
+        print(my_card)
+        print()
+        print(pc_card)
 
 
-def choice():
-    answers = ['y', 'n', 'q', 'iddqd']
-    answer = ''
-    while answer not in answers:
-        answer = input('Зачеркнуть цифру? (y/n/q) ').lower()
-        if answer == 'y':
-            if my_card - x is False:
+    def choice():
+        answers = ['y', 'n', 'q', 'iddqd']
+        answer = ''
+        while answer not in answers:
+            answer = input('Зачеркнуть цифру? (y/n/q) ').lower()
+            if answer == 'y':
+                if my_card - x is False:
+                    new_screen(end='yes')
+                    print('You lose! Game Over')
+                    return False
+                if len(my_card) == 0:
+                    new_screen(end='yes')
+                    print('You win!')
+                    return False
+            elif answer == 'n':
+                if my_card.check(x) is True:
+                    new_screen(end='yes')
+                    print('You lose! Game Over')
+                    return False
+            elif answer == 'q':
                 new_screen(end='yes')
-                print('You lose! Game Over')
+                print('Игрок {} вышел из игры. Побеждает игрок {}.'.format(my_card.player, pc_card.player))
                 return False
-            if len(my_card) == 0:
+            elif answer == 'iddqd':
+                for i in my_card.whole_card:
+                    for j in i:
+                        if type(j) is int:
+                            my_card - j
                 new_screen(end='yes')
-                print('You win!')
+                print("You win, but hey, you're a CHEATER!!!")
                 return False
-        elif answer == 'n':
-            if my_card.check(x) is True:
-                new_screen(end='yes')
-                print('You lose! Game Over')
-                return False
-        elif answer == 'q':
-            new_screen(end='yes')
-            print('Игрок {} вышел из игры. Побеждает игрок {}.'.format(my_card.player, pc_card.player))
-            return False
-        elif answer == 'iddqd':
-            for i in my_card.whole_card:
-                for j in i:
-                    if type(j) is int:
-                        my_card - j
-            new_screen(end='yes')
-            print("You win, but hey, you're a CHEATER!!!")
-            return False
-        else:
-            print('Я Вас не понял, повторите еще раз.')
+            else:
+                print('Я Вас не понял, повторите еще раз.')
 
 
-my_card = Card('My')
-pc_card = Card('PC')
+    my_card = Card('My')
+    pc_card = Card('PC')
 
-bag = RandomNumbers()
+    bag = RandomNumbers()
 
-while len(bag) > 0:
-    new_screen()
-    result = choice()
-    if result == False:
-        break
-    if pc_card.check(x) is True:
-        pc_card - x
-        if len(pc_card) == 0:
-            new_screen(end='yes')
-            print('PC win! You lose! Game Over')
+    while len(bag) > 0:
+        new_screen()
+        result = choice()
+        if result == False:
             break
-if len(bag) == 0:
-    print("No more barrels in the bag. It's a draw!")
+        if pc_card.check(x) is True:
+            pc_card - x
+            if len(pc_card) == 0:
+                new_screen(end='yes')
+                print('PC win! You lose! Game Over')
+                break
+    if len(bag) == 0:
+        print("No more barrels in the bag. It's a draw!")
+
+
+if __name__ == '__main__':
+    main()
+
 
 input("Press Enter")
